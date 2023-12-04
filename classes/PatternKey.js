@@ -1,14 +1,3 @@
-/* This function returns a random number within the lowerBound and upperBound variables.
-The lowerBound and upperBound variables are included in the output. */
-function GetRandomNumber(lowerBound, upperBound) {
-    
-    // Determines the range between the lowerBound and upperBound variables.
-    numberRange = Math.abs(upperBound - lowerBound) + 1;
-    
-    // Returns a random number between lowerBound and upperBound variables inclusive.
-    return Math.floor(Math.random() * numberRange) + lowerBound;
-}
-
 /* This array contains all twenty four major and minor scales. A random scale is selected for the paternKey class.
 Although it is unconventional, only sharp accidentials are used in order to simplify code. */
 const allScales = [ 
@@ -24,7 +13,7 @@ const allScales = [
     ["g", "a", "b", "c", "d", "e", "f#"],
     ["g#", "a#", "c", "c#", "d#", "f", "g"],
     ["a", "b", "c#", "d", "e", "f#", "g#"],
-    ["a#", "c", "d", "d#", "f", "g", "a"]
+    ["a#", "c", "d", "d#", "f", "g", "a"],
     ["b", "c#", "d#", "e", "f#", "g#", "a#"],
 
     // Minor scales...
@@ -38,7 +27,7 @@ const allScales = [
     ["g", "a", "a#", "c", "d", "e", "f"],
     ["g#", "a#", "b", "c#", "d#", "f", "f#"],
     ["a", "b", "c", "d", "e", "f#", "g"],
-    ["a#", "c", "c#", "d#", "f", "g", "g#"]
+    ["a#", "c", "c#", "d#", "f", "g", "g#"],
     ["b", "c#", "d", "e", "f#", "g#", "a"]
 ];
 
@@ -49,15 +38,28 @@ const allScales = [
  * Because of this, the patternKey class will have a patternScale data member which is randomly selected.
  * The patternKey class will be used to return random notes and random chords unique to the key. 
  */
-class patternKey {
+class PatternKey {
 
     /**
      * The class constructor initialises the paternScale data member with a random scale 
      * from the allScales array.
      */
-    constructor() {
+    constructor(scale) {
         
-        this.patternScale = allScales[GetRandomNumber(0,23)];
+        if (scale) {
+
+            this._patternScale = scale;
+        }
+        else {
+            
+            this._patternScale = allScales[GetRandomNumber(0,23)];
+        }
+    }
+
+    CreateCopy() {
+
+        let retVal = new PatternKey(this._patternScale);
+        return retVal;
     }
 
     /**
@@ -70,21 +72,21 @@ class patternKey {
      * @param {Integer between zero and three that specifies the note of the chord to return.} noteId 
      * @returns A single note of a chord based on the offset of the chord's root note from the tonic of the scale.
      */
-    getChord(noteOffset, noteId) {
+    GetChord(noteOffset, noteId) {
 
         /* A chord can be created by layering every other note of a scale. 
         Because of this, noteId is multiplied by two. */
-        notePosition = (noteId * 2) + noteOffset;
+        let notePosition = (noteId * 2) + noteOffset;
 
         if (notePosition > 6) {
 
             /* If the note extends beyond the seven notes in the patternScale array, 
             seven is subtracted from the notePosition as scales repeat after reaching the octave. */
-            return this.patternScale[notePosition - 7];
+            return this._patternScale[notePosition - 7];
         }
         else {
 
-            return this.patternScale[notePosition];
+            return this._patternScale[notePosition];
         }
     }
 
@@ -92,8 +94,8 @@ class patternKey {
      * The getRandom function returns a random note within the key.
      * @returns A random note within the patternScale data member.
      */
-    getRandom() {
+    GetRandom() {
 
-        return this.patternScale[GetRandomNumber(0,6)];
+        return this._patternScale[GetRandomNumber(0,6)];
     }
 }
